@@ -1,0 +1,23 @@
+#euproj-items .euproj-service-icon {
+    display: flex;
+    align-items: center;
+}
+#euproj-items .euproj-service-icon img {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 40px;
+    width: 40px;
+    margin-right: 15px;
+}
+#euproj-items .euproj-toggle-status {
+    display: flex;
+    align-items: center;
+}
+#euproj-items .euproj-toggle-status svg {
+    margin-right: 7px;
+}
+
+#euproj-items th, #euproj-items td {
+    display: table-cell !important;
+}

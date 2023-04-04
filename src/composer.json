@@ -1,0 +1,36 @@
+{
+    "name": "site-kings/zorgportal-wp",
+    "type": "wordpressplugin",
+    "description": "A WP Plugin to manage finances",
+    "keywords": [
+        "healthcare",
+        "factoring",
+        "finance",
+        "wordpress",
+        "plugin",
+        "api",
+        "php",
+        "ExactOnline",
+        "exact"
+    ],
+    "homepage": "http://github.com/site-kings/zorgportal-wp",
+    "autoload": {
+        "psr-4": {
+            "Zorgportal\\": "app"
+        }
+    },
+    "require": {
+        "phpoffice/phpspreadsheet": "^1.21",
+        "zendframework/zendpdf": "^2.0",
+        "yahnis-elsts/plugin-update-checker": "^4.13",
+        "picqer/exact-php-client": "^3.46"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^8.5|^9.3"
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Picqer\\Tests\\": "tests/"
+        }
+    }
+}

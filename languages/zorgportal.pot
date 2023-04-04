@@ -1,0 +1,729 @@
+# Copyright (C) 2022 Zorgportal
+# This file is distributed under the same license as the Zorgportal package.
+msgid ""
+msgstr ""
+"Project-Id-Version: Zorgportal 0.1\n"
+"Report-Msgid-Bugs-To: https://wordpress.org/support/plugin/zorgportal\n"
+"POT-Creation-Date: 2022-07-09 20:23:14+00:00\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"PO-Revision-Date: 2022-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+
+#: src/app/Admin/Admin.php:52
+msgid ""
+"Please upgrade your database for <a href=\"plugins.php?s=zorgportal"
+"\">Zorgportal</a> plugin by deativating then activating the plugin."
+msgstr ""
+
+#. #-#-#-#-#  zorgportal.pot (Zorgportal 0.1)  #-#-#-#-#
+#. Plugin Name of the plugin/theme
+#: src/app/Admin/Admin.php:70 src/app/Admin/Admin.php:71
+msgid "Zorgportal"
+msgstr ""
+
+#: src/app/Admin/Admin.php:80
+msgid "Zorgportal &mdash; DbcCodes"
+msgstr ""
+
+#: src/app/Admin/Admin.php:81
+msgid "DbcCodes"
+msgstr ""
+
+#: src/app/Admin/Admin.php:88
+msgid "Zorgportal &mdash; Add New Code"
+msgstr ""
+
+#: src/app/Admin/Admin.php:97
+msgid "Zorgportal &mdash; Edit Code"
+msgstr ""
+
+#: src/app/Admin/Admin.php:106
+msgid "Zorgportal &mdash; Import Codes"
+msgstr ""
+
+#: src/app/Admin/Admin.php:115
+msgid "Zorgportal &mdash; Import Invoices"
+msgstr ""
+
+#: src/app/Admin/Admin.php:116
+msgid "Import Invoices"
+msgstr ""
+
+#: src/app/Admin/Admin.php:124
+msgid "Zorgportal &mdash; Practitioners"
+msgstr ""
+
+#: src/app/Admin/Admin.php:125
+msgid "Practitioners"
+msgstr ""
+
+#: src/app/Admin/Admin.php:133
+msgid "Zorgportal &mdash; Edit Practitioner"
+msgstr ""
+
+#: src/app/Admin/Admin.php:142
+msgid "Zorgportal &mdash; Add Practitioner"
+msgstr ""
+
+#: src/app/Admin/Admin.php:151
+msgid "Zorgportal &mdash; Practitioner Invoices"
+msgstr ""
+
+#: src/app/Admin/Admin.php:160
+msgid "Zorgportal &mdash; Invoices"
+msgstr ""
+
+#: src/app/Admin/Admin.php:161 src/templates/practitioners.php:73
+msgid "Invoices"
+msgstr ""
+
+#: src/app/Admin/Admin.php:169
+msgid "Zorgportal &mdash; Edit Invoice"
+msgstr ""
+
+#: src/app/Admin/Admin.php:178
+msgid "Zorgportal &mdash; View Invoice"
+msgstr ""
+
+#: src/app/Admin/Admin.php:250
+msgid "Manage"
+msgstr ""
+
+#: src/app/Admin/Screen/DbcCodes.php:34 src/app/Admin/Screen/EditDbcCode.php:40
+#: src/app/Admin/Screen/EditInvoice.php:46
+#: src/app/Admin/Screen/EditPractitioner.php:34
+#: src/app/Admin/Screen/Invoices.php:75
+#: src/app/Admin/Screen/Practitioners.php:34
+msgid "Invalid request, authorization check failed. Please try again."
+msgstr ""
+
+#: src/app/Admin/Screen/DbcCodes.php:44
+msgid "%d item deleted."
+msgid_plural "%d codes deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/app/Admin/Screen/EditDbcCode.php:56
+msgid "DBC code cannot be empty."
+msgstr ""
+
+#: src/app/Admin/Screen/EditDbcCode.php:61
+msgid "Invalid or missing applied start date."
+msgstr ""
+
+#: src/app/Admin/Screen/EditDbcCode.php:64
+msgid "Invalid or missing applied end date."
+msgstr ""
+
+#: src/app/Admin/Screen/EditDbcCode.php:81
+msgid "Code updated successfully."
+msgstr ""
+
+#: src/app/Admin/Screen/EditDbcCode.php:99
+msgid ""
+"Duplicate code detected. Did you mean to edit <a target=\"_blank\" href=\"%s"
+"\">%s</a>?"
+msgstr ""
+
+#: src/app/Admin/Screen/EditDbcCode.php:105
+#: src/app/Admin/Screen/EditPractitioner.php:60
+#: src/app/Admin/Screen/ImportCodes.php:25
+#: src/app/Admin/Screen/ImportInvoices.php:28
+msgid "Error occurred, please try again."
+msgstr ""
+
+#: src/app/Admin/Screen/EditInvoice.php:50
+msgid "Invoice updated successfully."
+msgstr ""
+
+#: src/app/Admin/Screen/EditPractitioner.php:37
+msgid "Practitioner name cannot be empty."
+msgstr ""
+
+#: src/app/Admin/Screen/EditPractitioner.php:40
+msgid "Practitioner location cannot be empty."
+msgstr ""
+
+#: src/app/Admin/Screen/EditPractitioner.php:43
+msgid "Practitioner specialty cannot be empty."
+msgstr ""
+
+#: src/app/Admin/Screen/EditPractitioner.php:46
+msgid "Practitioner fee cannot be empty."
+msgstr ""
+
+#: src/app/Admin/Screen/EditPractitioner.php:51
+msgid "Invalid practitioner fee."
+msgstr ""
+
+#: src/app/Admin/Screen/EditPractitioner.php:57
+msgid "Practitioner updated successfully."
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:26
+#: src/app/Admin/Screen/ImportInvoices.php:29
+msgid "(column %s)"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:27
+#: src/app/Admin/Screen/ImportInvoices.php:30
+msgid "No rows loaded. Please upload a file and wait for it to be loaded."
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:28
+msgid "%d DBC codes import correctly"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:29
+msgid "%d DBC codes overwritten"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:30
+msgid "%d DBC codes not imported because no correct value"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:77
+#: src/app/Admin/Screen/ImportInvoices.php:72
+msgid "Empty dataset supplied."
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:100
+#: src/app/Admin/Screen/ImportInvoices.php:102
+msgid "One or more fields not mapped to their value location."
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:104
+msgid "Invalid date range."
+msgstr ""
+
+#: src/app/Admin/Screen/ImportCodes.php:113
+#: src/app/Admin/Screen/ImportCodes.php:166
+msgid ""
+"%d DBC codes duplicate detected: <code style=\"display:table;margin-top:5px"
+"\">%s</code>"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportInvoices.php:44
+msgid "%d invoices adjusted accordingly"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportInvoices.php:45
+msgid "%d unrecognized DBC codes:"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportInvoices.php:46
+msgid "%d unrecognized invoices:"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportInvoices.php:47
+msgid "Save"
+msgstr ""
+
+#: src/app/Admin/Screen/ImportInvoices.php:58
+msgid "Please select a valid year or date range."
+msgstr ""
+
+#: src/app/Admin/Screen/Invoices.php:85
+msgid "%d invoice deleted."
+msgid_plural "%d invoices deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/app/Admin/Screen/PractitionerInvoices.php:39
+#: src/app/Admin/Screen/PractitionerInvoices.php:41
+msgid "Invalid quarter selected."
+msgstr ""
+
+#: src/app/Admin/Screen/PractitionerInvoices.php:51
+msgid "Invalid start date."
+msgstr ""
+
+#: src/app/Admin/Screen/PractitionerInvoices.php:54
+msgid "Invalid end date."
+msgstr ""
+
+#: src/app/Admin/Screen/PractitionerInvoices.php:90
+msgid "No invoices available for download."
+msgstr ""
+
+#: src/app/Admin/Screen/Practitioners.php:44
+msgid "%d practitioner deleted."
+msgid_plural "%d practitioners deleted."
+msgstr[0] ""
+msgstr[1] ""
+
+#: src/templates/applied-date.php:13 src/templates/invoices.php:25
+msgid "select period"
+msgstr ""
+
+#: src/templates/applied-date.php:19 src/templates/edit-code.php:36
+#: src/templates/import-codes.php:77 src/templates/invoices.php:33
+#: src/templates/practitioner-invoices.php:39
+msgid "From"
+msgstr ""
+
+#: src/templates/applied-date.php:24 src/templates/edit-code.php:39
+#: src/templates/import-codes.php:82 src/templates/invoices.php:38
+#: src/templates/practitioner-invoices.php:44
+msgid "To"
+msgstr ""
+
+#: src/templates/applied-date.php:30 src/templates/invoices.php:44
+msgid "select year"
+msgstr ""
+
+#: src/templates/codes.php:7
+msgid "Zorgportal &lsaquo; DBC Codes"
+msgstr ""
+
+#: src/templates/codes.php:8
+msgid "Import Codes"
+msgstr ""
+
+#: src/templates/codes.php:9
+msgid "New Code"
+msgstr ""
+
+#: src/templates/codes.php:15 src/templates/invoices.php:77
+#: src/templates/practitioners.php:14
+msgid "Search..."
+msgstr ""
+
+#: src/templates/codes.php:19 src/templates/invoices.php:82
+#: src/templates/practitioners.php:18
+msgid "Are you sure?"
+msgstr ""
+
+#: src/templates/codes.php:24 src/templates/invoices.php:87
+#: src/templates/practitioners.php:23
+msgid "Select All"
+msgstr ""
+
+#: src/templates/codes.php:30
+msgid "Code"
+msgstr ""
+
+#: src/templates/codes.php:37 src/templates/edit-code.php:22
+msgid "Description"
+msgstr ""
+
+#: src/templates/codes.php:44
+msgid "Active from"
+msgstr ""
+
+#: src/templates/codes.php:51
+msgid "Active to"
+msgstr ""
+
+#: src/templates/codes.php:58
+msgid "Insurer Package"
+msgstr ""
+
+#: src/templates/codes.php:65
+msgid "DBC Total Amount"
+msgstr ""
+
+#: src/templates/codes.php:95 src/templates/invoices.php:197
+#: src/templates/practitioners.php:75
+msgid "Edit"
+msgstr ""
+
+#: src/templates/codes.php:97 src/templates/invoices.php:199
+#: src/templates/practitioners.php:77
+msgid "Delete"
+msgstr ""
+
+#: src/templates/codes.php:104 src/templates/invoices.php:206
+#: src/templates/practitioners.php:84
+msgid "Nothing found for your current filters."
+msgstr ""
+
+#: src/templates/codes.php:104 src/templates/invoices.php:206
+#: src/templates/practitioners.php:84
+msgid "Nothing to show yet."
+msgstr ""
+
+#: src/templates/codes.php:113 src/templates/invoices.php:215
+#: src/templates/practitioners.php:93
+msgid "Select bulk action"
+msgstr ""
+
+#: src/templates/codes.php:115 src/templates/invoices.php:217
+#: src/templates/practitioners.php:95
+msgid "Bulk Actions"
+msgstr ""
+
+#: src/templates/codes.php:116 src/templates/invoices.php:218
+#: src/templates/practitioners.php:96
+msgid "Delete items"
+msgstr ""
+
+#: src/templates/codes.php:118 src/templates/invoices.php:220
+#: src/templates/practitioners.php:98
+msgid "Apply"
+msgstr ""
+
+#: src/templates/codes.php:126 src/templates/invoices.php:228
+#: src/templates/practitioners.php:106
+msgid "&larr; Previous Page"
+msgstr ""
+
+#: src/templates/codes.php:130 src/templates/invoices.php:232
+#: src/templates/practitioners.php:110
+msgid "Next Page &rarr;"
+msgstr ""
+
+#: src/templates/edit-code.php:5
+msgid "Zorgportal &lsaquo; Edit DBC Code"
+msgstr ""
+
+#: src/templates/edit-code.php:6
+msgid "Zorgportal &lsaquo; Add DBC Code"
+msgstr ""
+
+#: src/templates/edit-code.php:12 src/templates/invoices.php:71
+#: src/templates/invoices.php:115
+msgid "DBC Code"
+msgstr ""
+
+#: src/templates/edit-code.php:32 src/templates/import-codes.php:51
+msgid "Applied Date"
+msgstr ""
+
+#: src/templates/edit-code.php:48
+msgid "Total Amount"
+msgstr ""
+
+#: src/templates/edit-code.php:57
+msgid "Insurer Packages"
+msgstr ""
+
+#: src/templates/edit-code.php:63 src/templates/invoices.php:143
+msgid "Insurer"
+msgstr ""
+
+#: src/templates/edit-code.php:64 src/templates/invoices.php:157
+msgid "Amount"
+msgstr ""
+
+#: src/templates/edit-code.php:72
+msgid "Add Package"
+msgstr ""
+
+#: src/templates/edit-code.php:78 src/templates/edit-invoice.php:21
+#: src/templates/edit-practitioner.php:51
+msgid "Save Changes"
+msgstr ""
+
+#: src/templates/edit-invoice.php:4
+msgid "Zorgportal &lsaquo; Edit Invoice"
+msgstr ""
+
+#: src/templates/edit-invoice.php:22
+msgid "Cancel"
+msgstr ""
+
+#: src/templates/edit-practitioner.php:5
+msgid "Zorgportal &lsaquo; Edit Practitioner"
+msgstr ""
+
+#: src/templates/edit-practitioner.php:6
+msgid "Zorgportal &lsaquo; Add Practitioner"
+msgstr ""
+
+#: src/templates/edit-practitioner.php:12
+msgid "Practitioner Name"
+msgstr ""
+
+#: src/templates/edit-practitioner.php:22 src/templates/invoices.php:50
+#: src/templates/invoices.php:106 src/templates/practitioners.php:36
+msgid "Location"
+msgstr ""
+
+#: src/templates/edit-practitioner.php:32 src/templates/invoices.php:64
+#: src/templates/practitioners.php:43
+msgid "Specialty"
+msgstr ""
+
+#: src/templates/edit-practitioner.php:42
+msgid "Fee (%)"
+msgstr ""
+
+#: src/templates/import-codes.php:4
+msgid "Zorgportal &lsaquo; Upload DBC Codes"
+msgstr ""
+
+#: src/templates/import-codes.php:8
+msgid "Settings"
+msgstr ""
+
+#: src/templates/import-codes.php:12
+msgid "Overwrite DBC Codes if there are duplicates"
+msgstr ""
+
+#: src/templates/import-codes.php:17
+msgid "Clear all data and fill in new"
+msgstr ""
+
+#: src/templates/import-codes.php:24 src/templates/import-invoices.php:10
+msgid "Select file to upload"
+msgstr ""
+
+#: src/templates/import-codes.php:33 src/templates/import-invoices.php:19
+msgid "Fields Map"
+msgstr ""
+
+#: src/templates/import-codes.php:55
+msgid "Select Year to apply"
+msgstr ""
+
+#: src/templates/import-codes.php:62 src/templates/practitioner-invoices.php:21
+msgid "Or Select From - To Date"
+msgstr ""
+
+#: src/templates/import-codes.php:93
+msgid "Importing..."
+msgstr ""
+
+#: src/templates/import-codes.php:93
+msgid "Upload"
+msgstr ""
+
+#: src/templates/import-invoices.php:4
+msgid "Zorgportal &lsaquo; Import Invoices"
+msgstr ""
+
+#: src/templates/import-invoices.php:35 src/templates/import-invoices.php:42
+msgid "Generating invoice..."
+msgstr ""
+
+#: src/templates/import-invoices.php:35 src/templates/import-invoices.php:42
+msgid "Download file"
+msgstr ""
+
+#: src/templates/import-invoices.php:35 src/templates/import-invoices.php:42
+msgid "Next"
+msgstr ""
+
+#: src/templates/invoices.php:7
+msgid "Zorgportal &lsaquo; Invoices"
+msgstr ""
+
+#: src/templates/invoices.php:16
+msgid "Year"
+msgstr ""
+
+#: src/templates/invoices.php:57 src/templates/invoices.php:110
+msgid "Practitioner"
+msgstr ""
+
+#: src/templates/invoices.php:79 src/templates/practitioner-invoices.php:48
+msgid "Filter"
+msgstr ""
+
+#: src/templates/invoices.php:93 src/templates/practitioner-invoices.php:82
+msgid "Invoice id"
+msgstr ""
+
+#: src/templates/invoices.php:100
+msgid "Invoice date"
+msgstr ""
+
+#: src/templates/invoices.php:122 src/templates/practitioner-invoices.php:87
+msgid "SubtrajectDeclaratiecodeOmschrijving"
+msgstr ""
+
+#: src/templates/invoices.php:129 src/templates/practitioner-invoices.php:84
+msgid "SubtrajectStartdatum"
+msgstr ""
+
+#: src/templates/invoices.php:136 src/templates/practitioner-invoices.php:85
+msgid "SubtrajectEinddatum"
+msgstr ""
+
+#: src/templates/invoices.php:150
+msgid "Policy"
+msgstr ""
+
+#: src/templates/invoices.php:164
+msgid "Reimbursement"
+msgstr ""
+
+#: src/templates/invoices.php:195
+msgid "View"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:4
+msgid "Zorgportal &lsaquo; %s &lsaquo; Invoices"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:10
+msgid "Date Period"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:14
+msgid "Select Date Quarter"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:27
+msgid "&mdash; select &mdash;"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:31
+msgid "Q%d %d"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:55
+msgid "Total Revenue"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:60
+#: src/templates/practitioner-invoices.php:89
+msgid "Honorarium"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:65
+msgid "Total vergoeding"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:74
+msgid "All invoices from that period"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:83
+msgid "Invoice Date"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:86
+msgid "SubtrajectDeclaratiecode"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:88
+msgid "Reimburse Amount"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:90 src/templates/view-invoice.php:28
+msgid "Vergoeding"
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:98
+msgid "No invoices available. Try resetting your filters."
+msgstr ""
+
+#: src/templates/practitioner-invoices.php:121
+msgid "Download"
+msgstr ""
+
+#: src/templates/practitioners.php:7
+msgid "Zorgportal &lsaquo; Practitioners"
+msgstr ""
+
+#: src/templates/practitioners.php:8
+msgid "Add New"
+msgstr ""
+
+#: src/templates/practitioners.php:29
+msgid "Name"
+msgstr ""
+
+#: src/templates/practitioners.php:50
+msgid "Fee"
+msgstr ""
+
+#: src/templates/view-invoice.php:4
+msgid "Zorgportal &lsaquo; Invoice Details"
+msgstr ""
+
+#: src/templates/view-invoice.php:7
+msgid "Factuur"
+msgstr ""
+
+#: src/templates/view-invoice.php:12
+msgid "Nummer"
+msgstr ""
+
+#: src/templates/view-invoice.php:16
+msgid "Datum"
+msgstr ""
+
+#: src/templates/view-invoice.php:20
+msgid "Omschrijving"
+msgstr ""
+
+#: src/templates/view-invoice.php:24
+msgid "Bedrag"
+msgstr ""
+
+#: src/templates/view-invoice.php:32
+msgid "Verzekeraar"
+msgstr ""
+
+#: src/templates/view-invoice.php:36
+msgid "Polis"
+msgstr ""
+
+#: src/templates/view-invoice.php:40
+msgid "Uiterste betaaldatum"
+msgstr ""
+
+#: src/templates/view-invoice.php:44
+msgid "Status"
+msgstr ""
+
+#: src/templates/view-invoice.php:48
+msgid "Dossiernummer"
+msgstr ""
+
+#: src/templates/view-invoice.php:52
+msgid "Dossieromschrijving"
+msgstr ""
+
+#: src/templates/view-invoice.php:56
+msgid "Locatie"
+msgstr ""
+
+#: src/templates/view-invoice.php:60
+msgid "Behandelaar"
+msgstr ""
+
+#: src/templates/view-invoice.php:64
+msgid "Diagnosecode"
+msgstr ""
+
+#: src/templates/view-invoice.php:68
+msgid "Behandelingnummer"
+msgstr ""
+
+#: src/templates/view-invoice.php:72
+msgid "Startdatum"
+msgstr ""
+
+#: src/templates/view-invoice.php:76
+msgid "Einddatum"
+msgstr ""
+
+#: src/templates/view-invoice.php:80
+msgid "Behandeling omschrijving"
+msgstr ""
+
+#: src/templates/view-invoice.php:88
+msgid "&laquo; Back to Invoices"
+msgstr ""
+
+#. #-#-#-#-#  zorgportal.pot (Zorgportal 0.1)  #-#-#-#-#
+#. Plugin URI of the plugin/theme
+#. #-#-#-#-#  zorgportal.pot (Zorgportal 0.1)  #-#-#-#-#
+#. Author URI of the plugin/theme
+msgid "https://uittreksel-register.nl"
+msgstr ""
+
+#. Description of the plugin/theme
+msgid "Zorgportal Project"
+msgstr ""
+
+#. Author of the plugin/theme
+msgid "uittreksel-register.nl"
+msgstr ""

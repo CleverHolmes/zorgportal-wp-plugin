@@ -1,0 +1,23 @@
+#zportal-items .zportal-service-icon {
+    display: flex;
+    align-items: center;
+}
+#zportal-items .zportal-service-icon img {
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-position: center center;
+    height: 40px;
+    width: 40px;
+    margin-right: 15px;
+}
+#zportal-items .zportal-toggle-status {
+    display: flex;
+    align-items: center;
+}
+#zportal-items .zportal-toggle-status svg {
+    margin-right: 7px;
+}
+
+#zportal-items th, #zportal-items td {
+    display: table-cell !important;
+}

@@ -1,0 +1,53 @@
+body.wp-admin {
+    background: white
+}
+#zp-wrap .zp-sections {
+    display: flex;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    max-width: 980px;
+    margin-left: -4rem;
+}
+
+@media (max-width: 680px) {
+    #zp-wrap .zp-sections {
+        display: table;
+    }
+}
+
+#zp-wrap .zp-sections > div {
+    flex: 1;
+    margin-left: 4rem;
+}
+#zp-wrap .zp-sections > div:last-child {
+    /*padding-left: 4rem;*/
+}
+#zp-wrap .zp-sections .zp-chevron {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    user-select: none;
+    -webkit-user-select: none;
+}
+#zp-wrap .zp-sections .zp-chevron svg {
+    margin-left: 8px;
+    height: 18px;
+}
+#zp-wrap .zp-sections .zp-chevron h3 {
+    margin: 0;
+    font-size: .9rem;
+}
+#zp-wrap .zp-sections form.collapsed .zp-section-content {
+    display: none;
+}
+#zp-wrap .zp-sections form.collapsed .zp-chevron svg:not(.zp-check) {
+    transform: rotate(180deg);
+}
+#zp-wrap #zp-rate-limit-table td:first-child {
+    padding-left: 0;
+    font-weight: 600
+}
+#zp-wrap #zp-rate-limit-table td:last-child {
+    padding-left:1rem
+}
