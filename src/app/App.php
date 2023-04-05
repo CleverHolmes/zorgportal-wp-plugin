@@ -20,7 +20,7 @@ class App
     const DB_VERSION_OPTION = 'zorgportal:db_version';
     const DBC_CODES_TABLE = 'zp_dbc_codes';
     const INVOICES_TABLE = 'zp_invoices';
-    const BULKINVOICE_TABLE = 'zp_bulkinvoices';
+    const BULKINVOICE_TABLE = 'zp_bulk_invoices';
     const PRACTITIONERS_TABLE = 'zp_practitioners';
     const PATIENTS_TABLE = 'zp_patients';
     const EO_LOGS_TABLE = 'zp_api_logsv2';
@@ -110,7 +110,7 @@ class App
         Invoices::setupDb( $db_version );
 
         // bulkinvoices
-        // BulkInvoices::setupDb( $db_version );
+        BulkInvoice::setupDb( $db_version );
 
         // practitioners
         Practitioners::setupDb( $db_version );

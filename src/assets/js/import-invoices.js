@@ -108,7 +108,6 @@
     if ( download_url ) {
       last_submitted_data.append('refresh_download', '1')
       submit.val(submit.data('loading')).prop('disabled', 'disabled')
-
       $.ajax({
         url: opt.ajaxUrl.replace(/%s/g, 'invoices/import'),
         type: 'POST',
@@ -117,6 +116,7 @@
         contentType: false,
         success: function(res)
         {
+
           last_submitted_data.delete('refresh_download')
 
           if ( res && res.download_url ) {
@@ -130,6 +130,7 @@
         },
         error: function()
         {
+
           last_submitted_data.delete('refresh_download')
           submit.val(submit.data('download')).prop('disabled', false)
         }
@@ -154,7 +155,7 @@
     submit.val(submit.data('loading')).prop('disabled', 'disabled')
 
     last_submitted_data = data
-     
+
     xhr = $.ajax({
       url: opt.ajaxUrl.replace(/%s/g, 'invoices/import'),
       type: 'POST',
@@ -188,8 +189,9 @@
 
         $('#submit-button-early', form).show()
       },
-      error: function()
+      error: function(err)
       {
+
         $('#submit-button-early', form).hide()
         submit.val(submit.data('value')).prop('disabled', false)
     

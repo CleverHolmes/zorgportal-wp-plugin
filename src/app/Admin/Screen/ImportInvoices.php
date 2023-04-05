@@ -6,10 +6,12 @@ use Zorgportal\DbcCodes as Codes;
 use Zorgportal\App;
 use Zorgportal\Practitioners;
 use Zorgportal\Invoices;
+use Zorgportal\BulkInvoice;
 use Zorgportal\Patients;
 use WP_REST_Response;
 use WP_REST_Request;
 use DateTime;
+use DateInterval;
 
 class ImportInvoices extends Screen
 {
@@ -143,7 +145,13 @@ class ImportInvoices extends Screen
 
         $invoice_dates = $invoice_numbers = [];
         $ignore_duplicates = [];
-
+        $bulkInvoice = [];
+        $bulkInvoice['id'] = BulkInvoice::getMaxId();
+        $bulkInvoice['NumberInvoices'] = 0;
+        $bulkInvoice['AmountTotal'] = 0;
+        $bulkInvoice['ReimburseTotal'] = 0;
+        $bulkInvoice['invoiceList'] = [];
+    
         foreach ( $rows as $i => $row ) {
             if ( ! $i ) {
                 foreach ( $row as $loc => $header ) {
@@ -344,6 +352,8 @@ class ImportInvoices extends Screen
                 }
             }
 
+            $bulkId = $row[$headers['DeclaratieDebiteurNaam']] === "VGZ Zorgverzekeraar N.V." ? $bulkInvoice['id'] : null;
+
             $save_invoice = [
                 $p='_CreatedDate' =>  date("Y/m/d H:i:s"),
                 $p='DeclaratieNummer' => $row[$headers[$p] ?? ''] ?? null,
@@ -371,7 +381,16 @@ class ImportInvoices extends Screen
                 $p='ZorgverzekeraarPakket' => $row[$headers[$p] ?? ''] ?? null,
                 // re have to parse the reimburse amount, it's not being parsed correctly right now
                 $p='ReimburseAmount' => is_float($entry[11]) || is_int($entry[11]) ? $entry[11] : App::extractNum($entry[11]),
+                $p='BulkInvoiceNumber' => intval($bulkId)
             ];
+
+            
+            if($bulkId !== null) {
+                $bulkInvoice['AmountTotal'] += $save_invoice['ReimburseAmount'];
+                $bulkInvoice['ReimburseTotal'] += $save_invoice['SubtrajectDeclaratiebedrag'];
+                $bulkInvoice['NumberInvoices'] ++;
+                array_push($bulkInvoice['invoiceList'], $save_invoice['DeclaratieNummer'] );
+            }
 
             if ( $imported ) {
                 Invoices::update($imported['id'], $save_invoice, false);
@@ -383,18 +402,23 @@ class ImportInvoices extends Screen
             $invoice_numbers []= (int) $save_invoice['DeclaratieNummer'];
         }
 
-        // if ( $invoice_dates ) {
-        //     // import transactions
-        //     // Invoices::eoBulkRetrieveInvoices(date('Y-m-d', min($invoice_dates)), date('Y-m-d', max($invoice_dates)), $this->appContext);
+        // Generate BulkInvoice from single Invoices
+        if($bulkInvoice['NumberInvoices'] > 0) BulkInvoice::insert($bulkInvoice);
 
-        //     // query receivables and mark invoices as paid/due/overdue
-        //     Invoices::eoBulkRetrieveReceivables(
-        //         date('Y-m-d', min($invoice_dates)),
-        //         date('Y-m-d', max($invoice_dates)),
-        //         $invoice_numbers,
-        //         $this->appContext
-        //     );
-        // }
+
+        if ( $invoice_dates ) {
+
+            // import transactions
+            Invoices::eoBulkRetrieveInvoices(date('Y-m-d', min($invoice_dates)), date('Y-m-d'), $this->appContext);
+
+            // query receivables and mark invoices as paid/due/overdue
+            Invoices::eoBulkRetrieveReceivables(
+                date('Y-m-d', min($invoice_dates)),
+                date('Y-m-d'),
+                $invoice_numbers,
+                $this->appContext
+            );
+        }
 
         // remove codes found in policy errors table from unrecognized dbc codes
         $codes_404 = array_filter($codes_404, function($code) use ($policy_404)
@@ -599,7 +623,7 @@ class ImportInvoices extends Screen
         }
     }
 
-    private function checkFirstRow( string $file )
+    public function checkFirstRow( string $file )
     {
         try {
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
@@ -617,7 +641,7 @@ class ImportInvoices extends Screen
         }
     }
 
-    private function eachRowCheck( string $file )
+    public function eachRowCheck( string $file )
     {
         try {
             $spreadsheet = \PhpOffice\PhpSpreadsheet\IOFactory::load($file);
@@ -636,4 +660,5 @@ class ImportInvoices extends Screen
             return [];
         }
     }
+
 }

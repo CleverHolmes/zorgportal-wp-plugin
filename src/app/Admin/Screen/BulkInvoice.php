@@ -40,7 +40,6 @@ class BulkInvoice extends Screen
         ]));
     }
 
-    
     public function scripts()
     {
         $base = trailingslashit(plugin_dir_url( $this->appContext->getPluginFile() ));
@@ -65,7 +64,6 @@ class BulkInvoice extends Screen
             ) );
         }
     }
-
 
     public function getActiveSort() : array
     {

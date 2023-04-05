@@ -38,6 +38,7 @@ class Invoices
         'EoStatus' => null,
         'Reminder1Sent' => null,
         'Reminder2Sent' => null,
+        'BulkInvoiceNumber' => null,
     ];
 
     const PAYMENT_STATUS_PAID = 1;
@@ -129,7 +130,7 @@ class Invoices
             array_key_exists($float, $args) && ($data[$float] = $extract_nums ? App::extractNum($args[$float]) : $args[$float]);
         }
 
-        foreach ( ['DeclaratieNummer','DossierNUmmer','SubtrajectNummer','SubtrajectDiagnosecode','DeclaratieDebiteurnummer','EoLastFetched','EoStatus','Reminder1Sent','Reminder2Sent'] as $int )
+        foreach ( ['DeclaratieNummer','DossierNUmmer','SubtrajectNummer','SubtrajectDiagnosecode','DeclaratieDebiteurnummer','EoLastFetched','EoStatus','Reminder1Sent','Reminder2Sent','BulkInvoiceNumber'] as $int )
             array_key_exists($int, $args) && ($data[$int] = (int) $args[$int]);
 
         foreach ( ['_CreatedDate','DeclaratieDatum','SubtrajectStartdatum','SubtrajectEinddatum'] as $date )
@@ -550,12 +551,12 @@ class Invoices
     }
 
     public static function eoBulkRetrieveReceivables( string $from, string $to, array $invoice_numbers, App $appContext )
-    {
+    { 
         if ( ! $division_code = $appContext->getCurrentDivisionCode() )
             return;
 
         $results = [];
-       
+
         set_time_limit(0);
         self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/read/financial/ReceivablesList/?$filter=InvoiceDate gt datetime\'%s\' and InvoiceDate le datetime\'%s\'&$select=*', $division_code, $from, $to), $appContext);
 
@@ -609,6 +610,9 @@ class Invoices
         $results = [];
 
         set_time_limit(0);
+    
+
+
         self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/bulk/Cashflow/Receivables/?$filter=InvoiceDate gt datetime\'%s\' and InvoiceDate le datetime\'%s\'&$select=AccountCode,AccountName,AmountDC,BankAccountNumber,Created,CreatorFullName,Description,Division,DueDate,EndDate,EndYear,EndPeriod,EntryDate,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceDate,InvoiceNumber,IsFullyPaid,Journal,JournalDescription,LastPaymentDate,Modified,ModifierFullName,Source,Status,TransactionAmountDC,TransactionReportingPeriod,PaymentCondition,PaymentConditionDescription,PaymentDays,PaymentMethod,PaymentReference,YourRef', $division_code, $from, $to), $appContext);
 
         $ids = array_filter(array_unique(array_map(function($payment)
@@ -638,7 +642,7 @@ class Invoices
     {
         if ( ! $tokens = get_option('zp_exactonline_auth_tokens') )
             return;
-
+        
         if ( ! ( $tokens['access_token'] ?? null ) )
             return;
 
@@ -854,14 +858,15 @@ class Invoices
         $maxBulk = (array) $wpdb->get_results("select max(id)as maxId from {$BulkTbl} where 1=1");
         $max = $maxBulk[0]->maxId == 0 ? "43000000" : $maxBulk[0]->maxId + 1; 
 
-            $sQuery = "select sum(SubtrajectDeclaratiebedrag)as Atotal, sum(ReimburseAmount)as Rtotal, max(DeclaratieDatum)as BillDate,count(id)as ids from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber IS NULL";
+            $sQuery = "select sum(SubtrajectDeclaratiebedrag)as Atotal, sum(ReimburseAmount)as Rtotal, max(DeclaratieDatum)as BillDate,count(id)as idCnt from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber = 0 OR Null";
 
-            $uQuery = "update {$table} set BulkInvoiceNumber = '".$max."' where `id` in (" . join(',', array_map('intval', $ids)) . ') and BulkInvoiceNumber IS NULL';
+            $uQuery = "update {$table} set BulkInvoiceNumber = '".$max."' where `id` in (" . join(',', array_map('intval', $ids)) . ') and BulkInvoiceNumber = 0 OR Null';
 
         $mount = (array) $wpdb->get_results($sQuery);
         $update = $wpdb->query($uQuery);
 
-        if($mount[0]->ids > 0 ) {
+        if($mount[0]->idCnt > 0 ) {
+
             $now = new DateTime();
             $interval = new DateInterval('P28D'); // P28D means "28 Days Interval"
             $iData ['id'] = $max; 
@@ -876,11 +881,11 @@ class Invoices
             $iData ['Insurer'] = "VGZ Zorgverzekeraar N.V"; 
             $iData ['Policy'] = "-"; 
             $iData ['Status'] = 0; 
-
+            $iData ['SingleInvoices'] = join(',', array_map('intval', $ids)); 
             $wpdb->insert($BulkTbl, $iData);
             return $wpdb->insert_id;
         }
         
-        return $mount[0]->ids; 
+        return $mount[0]->idCnt; 
     }
 }
