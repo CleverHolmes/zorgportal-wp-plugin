@@ -324,16 +324,6 @@ class BulkInvoice
         global $wpdb;
         $table = $wpdb->prefix . App::INVOICES_TABLE;
 
-        // disabled
-        // foreach ( array_chunk($ids, 1000) as $bulk ) {
-        //     // set invoices as paid
-        //     $wpdb->query($wpdb->prepare(
-        //         "update {$table} set EoStatus = %d where DeclaratieNummer in (" . join( ',', array_fill(0, count($bulk), '%d') ) . ')',
-        //         self::PAYMENT_STATUS_PAID,
-        //         ...$bulk
-        //     ));
-        // }
-
         // save transaction
         $txns = array_values(array_filter(array_map(function($id) use ($results)
         {

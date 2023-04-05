@@ -491,6 +491,15 @@ class Invoices
         return array_filter(array_unique(array_map('intval', explode(' ', $search))));
     }
 
+
+    /*
+    *  Implement getBankTransaction On Import Invoices
+    *
+    * @param string $from, First invoice date
+    * @param string $to, Today
+    * @param App $appContext
+    * @return boolean
+    */
     public static function eoBulkRetrieveInvoices( string $from, string $to, App $appContext )
     {
         if ( ! $division_code = $appContext->getCurrentDivisionCode() )
@@ -611,8 +620,6 @@ class Invoices
 
         set_time_limit(0);
     
-
-
         self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/bulk/Cashflow/Receivables/?$filter=InvoiceDate gt datetime\'%s\' and InvoiceDate le datetime\'%s\'&$select=AccountCode,AccountName,AmountDC,BankAccountNumber,Created,CreatorFullName,Description,Division,DueDate,EndDate,EndYear,EndPeriod,EntryDate,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceDate,InvoiceNumber,IsFullyPaid,Journal,JournalDescription,LastPaymentDate,Modified,ModifierFullName,Source,Status,TransactionAmountDC,TransactionReportingPeriod,PaymentCondition,PaymentConditionDescription,PaymentDays,PaymentMethod,PaymentReference,YourRef', $division_code, $from, $to), $appContext);
 
         $ids = array_filter(array_unique(array_map(function($payment)

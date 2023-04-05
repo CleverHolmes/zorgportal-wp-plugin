@@ -407,8 +407,8 @@ class ImportInvoices extends Screen
 
 
         if ( $invoice_dates ) {
-
-            // import transactions
+              
+            // Implement getBankTransaction On Import Invoices
             Invoices::eoBulkRetrieveInvoices(date('Y-m-d', min($invoice_dates)), date('Y-m-d'), $this->appContext);
 
             // query receivables and mark invoices as paid/due/overdue
