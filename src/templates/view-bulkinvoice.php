@@ -41,7 +41,10 @@
             </tr>
             <tr>
                 <td><strong><?php _e('ActualPaid', 'zorgportal'); ?></strong></td>
-                <td>N/A</td>
+                <td>
+                    <?php echo '€ ', esc_attr(number_format($invoice['actual'], 2)) ?: 'N/A'; ?>
+                    <?php echo esc_attr($invoice['tranId']); ?>
+                </td>
             </tr>
             <tr>
                 <td><strong><?php _e('Status', 'zorgportal'); ?></strong></td>
@@ -199,24 +202,23 @@
                 <th scope="col" class="manage-column column-title column-primary">
                     <strong><?php esc_attr_e('Status', 'zorgportal'); ?></strong>
                 </th>
-                <th>
-
-                </th>
             </tr>
         </thead>
 
         <tbody id="the-list">
             
-            <?php if ( count($txns) > 0 ) : ?>
+            <?php $i = 1; if ( count($txns) > 0 ) : ?>
                 <?php foreach ( $txns as $txn ) : ?>
                     <tr id="post-<?php echo $txn['id']; ?>" class="iedit author-self level-0 post-<?php echo $txn['id']; ?> type-post status-publish format-standard hentry category-uncategorized entry">
+                        <td class="author column-author"><?php echo esc_attr($i++); ?></td>
                         <td class="author column-author"><?php echo esc_attr(preg_replace('/\s\d+\:.+$/', '', $txn['Created'])); ?></td>
                         <td class="author column-author"><?php echo esc_attr($txn['Description']); ?></td>
                         <td class="author column-author"><?php echo esc_attr($txn['Notes']); ?></td>
                         <td class="author column-author"><?php echo esc_attr($txn['AmountDC']); ?></td>
+                        <td class="author column-author"><?php echo esc_attr($txn['AmountFC']); ?></td>
                         <td class="author column-author"><?php echo esc_attr($txn['Modified']); ?></td>
                         <td class="author column-author"><?php echo esc_attr($txn['Date']); ?></td>
-                        <td class="author column-author"><?php echo esc_attr($txn['Status']); ?></td>
+                        <td class="author column-author"><?php \Zorgportal\Invoices::printStatus($txn); ?></td>
                     </tr>
                 <?php endforeach; ?>
             <?php else : ?>

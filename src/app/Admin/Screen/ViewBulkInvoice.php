@@ -12,11 +12,10 @@ class ViewBulkInvoice extends Screen
     public function init()
     {
         $id = (int) ( $_GET['id'] ?? null );
-
         if ( $id <= 0 )
             exit( wp_safe_redirect('admin.php?page=zorgportal-bulkinvoice') );
 
-        if ( ! $this->bulkinvoice = BulkInvoice::queryOne(['id' => $id]) )
+        if ( ! $this->bulkinvoice = BulkInvoice::queryBulk(['id' => $id]) )
             exit( wp_safe_redirect('admin.php?page=zorgportal-bulkinvoice') );
 
         // refresh status
@@ -58,9 +57,9 @@ class ViewBulkInvoice extends Screen
             $this->error( __('Reminder 2 could not be sent.', 'zorgportal') );
 
         $this->invoice = BulkInvoice::queryChild(['id' => $id]);
-
+        
         $this->transactions = Transactions::query([
-            'YourRef' => $this->bulkinvoice['id'],
+            'YourRef' => $this->bulkinvoice[0]['id'],
             'nopaged' => 1,
         ])['list'];
     }
@@ -68,7 +67,7 @@ class ViewBulkInvoice extends Screen
     public function render()
     {
         return $this->renderTemplate('view-bulkinvoice.php', [
-            'invoice' => $this->bulkinvoice,
+            'invoice' => $this->bulkinvoice[0],
             'childs'=> $this->invoice,
             'txns' => $this->transactions,
             'nonce' => wp_create_nonce('zorgportal'),

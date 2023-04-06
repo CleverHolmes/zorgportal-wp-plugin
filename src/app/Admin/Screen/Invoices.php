@@ -115,7 +115,7 @@ class Invoices extends Screen
 
             $h_items = array_filter(array_unique( array_map('intval', (array) ($_POST['h_items'] ?? '')) ));
 
-            $bulk = Core::bulkInvoice($h_items);
+            $bulk = Core::bulkInvoice($h_items, $this->appContext);
             if($bulk == 0) return $this->error('Invoice was bulked already.', ' bulk_error.', $bulk, 'zorgportal' );
             else exit( wp_safe_redirect('admin.php?page=zorgportal-bulkinvoice') );
         }
@@ -132,7 +132,7 @@ class Invoices extends Screen
 
         if ( 'export' == ( $_POST['action2'] ?? '' ) ) {
 
-            $bulk = Core::bulkInvoice($items);
+            $bulk = Core::bulkInvoice($items, $this->appContext);
             if($bulk == 0) return $this->error('Invoice was bulked already.', ' bulk_error.', $bulk, 'zorgportal' );
             else exit( wp_safe_redirect('admin.php?page=zorgportal-bulkinvoice') );
         }

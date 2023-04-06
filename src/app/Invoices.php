@@ -855,7 +855,7 @@ class Invoices
         return $res;
     }
 
-    public static function bulkInvoice( array $ids )
+    public static function bulkInvoice( array $ids, App $appContext )
     {
         global $wpdb;
         $table = $wpdb->prefix . App::INVOICES_TABLE;
@@ -864,11 +864,11 @@ class Invoices
         $maxBulk = (array) $wpdb->get_results("select max(id)as maxId from {$BulkTbl} where 1=1");
         $max = $maxBulk[0]->maxId == 0 ? "43000000" : $maxBulk[0]->maxId + 1; 
 
-            $sQuery = "select sum(SubtrajectDeclaratiebedrag)as Atotal, sum(ReimburseAmount)as Rtotal, max(DeclaratieDatum)as BillDate,count(id)as idCnt from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber = 0 OR Null";
+            $sQuery = "select sum(SubtrajectDeclaratiebedrag)as Atotal, sum(ReimburseAmount)as Rtotal, max(DeclaratieDatum)as BillDate,count(id)as idCnt from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber IS NULL OR 0";
 
-            $uQuery = "update {$table} set BulkInvoiceNumber = '".$max."' where `id` in (" . join(',', array_map('intval', $ids)) . ') and BulkInvoiceNumber = 0 OR Null';
+            $uQuery = "update {$table} set BulkInvoiceNumber = '".$max."' where `id` in (" . join(',', array_map('intval', $ids)) . ') and BulkInvoiceNumber IS Null OR 0';
 
-            $idQuery = "select GROUP_CONCAT(DeclaratieNummer SEPARATOR ',')as idGroup  from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber = 0 OR Null";
+            $idQuery = "select GROUP_CONCAT(DeclaratieNummer SEPARATOR ',')as idGroup, max(DeclaratieDatum)as endDate, min(DeclaratieDatum)as startDate from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber IS NULL OR 0";
 
         $mount = (array) $wpdb->get_results($sQuery);
         $idGroup = (array) $wpdb->get_results($idQuery, ARRAY_A);
@@ -879,7 +879,7 @@ class Invoices
             $interval = new DateInterval('P28D'); // P28D means "28 Days Interval"
             $iData ['id'] = $max; 
             $iData ['_CreatedDate'] = date("Y/m/d H:i:s"); 
-            $iData ['NumberInvoices'] = $mount[0]->ids; 
+            $iData ['NumberInvoices'] = $mount[0]->idCnt; 
             $iData ['Date'] =  date("Y/m/d"); 
             $iData ['DueDate'] = $now->add($interval)->format('Y/m/d');
             $iData ['ReimburseTotal'] = $mount[0]->Rtotal;  
@@ -891,9 +891,14 @@ class Invoices
             $iData ['Status'] = 0; 
             $iData ['SingleInvoices'] = $idGroup[0]['idGroup']; 
             $wpdb->insert($BulkTbl, $iData);
+
+            //Call BankTransaction API
+            $startDate = new DateTime($idGroup[0]['startDate']);
+
+            BulkInvoice::eoBulkRetrieveInvoices(strval($startDate->format('Y-m-d')), strval(date('Y-m-d')), $appContext);
+
             return $wpdb->insert_id;
         }
-        
         return $mount[0]->idCnt; 
     }
 }

@@ -509,15 +509,15 @@ class App
             self::incrCounter(sprintf('%s/eo-errors/%s', $client_id, date('H-00')), HOUR_IN_SECONDS);
             $is_error_res = true;
         }
-
+        
         // log response status/headers
         EoLogs::insert([
             'request_url' => $url,
             'request_body' => ($params['body'] ?? null) ?: '',
             'request_headers' => self::getResponseHeadersStr( null, ($params['headers'] ?? null) ?: [] ),
-            'response' => ($res['body'] ?? null) ?: '',
+            'response' => $res->errors ? '' : $res['body'],
             'response_headers' => self::getResponseHeadersStr( $res ),
-            'http_status' => intval($res['response']['code'] ?? ''),
+            'http_status' => $res->errors ? '' : intval($res['response']['code']),
             'status' => $is_error_res ? EoLogs::STATUS_ERROR : EoLogs::STATUS_OK,
             'date' => time(),
         ]);

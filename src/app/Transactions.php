@@ -294,4 +294,18 @@ class Transactions
 
         return $ref;
     }
+
+
+    public function getBulkTransaction( string $id ) {
+
+        global $wpdb;
+        $table = $wpdb->prefix . App::TRANSACTIONS_TABLE;
+
+        $sql = "select sum(AmountFC)as actualPaid, id from {$table} where id=".$id; 
+        
+        $transaction = (array) $wpdb->get_results($sql, ARRAY_A);
+    
+        return $transaction;
+
+    }
 }

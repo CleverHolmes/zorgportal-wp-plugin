@@ -193,12 +193,26 @@ class BulkInvoice
         return $data;
     }
 
+    public static function queryBulk(array $args=[]) : array
+    {
+        global $wpdb;
+        $table = $wpdb->prefix . App::BULKINVOICE_TABLE;
+        $transactionTbl = $wpdb->prefix . App::TRANSACTIONS_TABLE;
+
+        $sql = "SELECT {$table}.*, SUM({$transactionTbl}.AmountDC) as actual,{$transactionTbl}.id as tranId  FROM {$table} LEFT JOIN {$transactionTbl} ON {$table}.id = {$transactionTbl}.YourRef  WHERE {$table}.id='".$args['id']."'  ";
+
+        $invoice = (array) $wpdb->get_results($sql, ARRAY_A);
+    
+        return $invoice;
+    }
+
     public static function queryChild(array $args=[]) : array
     {
         global $wpdb;
         $table = $wpdb->prefix . App::INVOICES_TABLE;
+        $transactionTbl = $wpdb->prefix . App::TRANSACTIONS_TABLE;
 
-        $sql = "SELECT * FROM {$table} WHERE BulkInvoiceNumber='".$args['id']."' ";
+        $sql = "SELECT *, {$transactionTbl}.id as txId FROM {$table} LEFT JOIN {$transactionTbl} ON {$table}.DeclaratieNummer = {$transactionTbl}.YourRef  WHERE BulkInvoiceNumber='".$args['id']."'  ";
 
         $invoice = (array) $wpdb->get_results($sql, ARRAY_A);
     
@@ -309,7 +323,8 @@ class BulkInvoice
         $results = [];
        
         set_time_limit(0);
-        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/financialtransaction/TransactionLines/?$filter=Type eq 40 and GLAccountCode eq \'1100\' and (Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $from, $to), $appContext);
+
+        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/financialtransaction/TransactionLines/?$filter=(Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $from, $to), $appContext);
 
         $search = join(' ', array_map(function($payment)
         {
@@ -320,6 +335,7 @@ class BulkInvoice
         {
             return 8 == strlen((string) $num);
         });
+
 
         global $wpdb;
         $table = $wpdb->prefix . App::INVOICES_TABLE;
@@ -341,6 +357,7 @@ class BulkInvoice
                 }
             }
         }, $ids)));
+
 
         foreach ( array_chunk($txns, 100) as $bulk ) {
             Transactions::insertBulk( $bulk );
@@ -422,6 +439,8 @@ class BulkInvoice
             return 8 == strlen((string) $num);
         });
 
+
+
         global $wpdb;
         $table = $wpdb->prefix . App::INVOICES_TABLE;
 
@@ -442,7 +461,7 @@ class BulkInvoice
 
         if ( ! ( $tokens['access_token'] ?? null ) )
             return;
-
+        
         list( $res, $error, $res_obj ) = App::callEoApi($apiUrl, [
             'method' => 'GET',
             'headers' => [
