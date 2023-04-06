@@ -491,7 +491,6 @@ class Invoices
         return array_filter(array_unique(array_map('intval', explode(' ', $search))));
     }
 
-
     /*
     *  Implement getBankTransaction On Import Invoices
     *
@@ -869,11 +868,13 @@ class Invoices
 
             $uQuery = "update {$table} set BulkInvoiceNumber = '".$max."' where `id` in (" . join(',', array_map('intval', $ids)) . ') and BulkInvoiceNumber = 0 OR Null';
 
+            $idQuery = "select GROUP_CONCAT(DeclaratieNummer SEPARATOR ',')as idGroup  from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber = 0 OR Null";
+
         $mount = (array) $wpdb->get_results($sQuery);
+        $idGroup = (array) $wpdb->get_results($idQuery, ARRAY_A);
         $update = $wpdb->query($uQuery);
 
         if($mount[0]->idCnt > 0 ) {
-
             $now = new DateTime();
             $interval = new DateInterval('P28D'); // P28D means "28 Days Interval"
             $iData ['id'] = $max; 
@@ -888,7 +889,7 @@ class Invoices
             $iData ['Insurer'] = "VGZ Zorgverzekeraar N.V"; 
             $iData ['Policy'] = "-"; 
             $iData ['Status'] = 0; 
-            $iData ['SingleInvoices'] = join(',', array_map('intval', $ids)); 
+            $iData ['SingleInvoices'] = $idGroup[0]['idGroup']; 
             $wpdb->insert($BulkTbl, $iData);
             return $wpdb->insert_id;
         }

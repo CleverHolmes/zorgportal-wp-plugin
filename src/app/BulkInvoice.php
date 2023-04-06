@@ -573,7 +573,7 @@ class BulkInvoice
 
         return wp_mail($notify_email, $subject, $body, [
             'content-type: text/html; charset=utf-8',
-        ], [ $filename, $plugin_dir . 'src/assets/Begeleidende brief indienen zorgverzekeraar.pdf' ]);
+        ], [ $filename, $plugin_dir . 'src/ assets/Begeleidende brief indienen zorgverzekeraar.pdf' ]);
     }
 
     // go to https://www.flanderijn.nl/opdrachtgevers/diensten/minnelijke-incasso/incassokosten/calculator/ (view-source)

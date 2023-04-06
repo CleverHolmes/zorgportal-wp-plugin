@@ -384,7 +384,6 @@ class ImportInvoices extends Screen
                 $p='BulkInvoiceNumber' => intval($bulkId)
             ];
 
-            
             if($bulkId !== null) {
                 $bulkInvoice['AmountTotal'] += $save_invoice['ReimburseAmount'];
                 $bulkInvoice['ReimburseTotal'] += $save_invoice['SubtrajectDeclaratiebedrag'];
@@ -393,6 +392,13 @@ class ImportInvoices extends Screen
             }
 
             if ( $imported ) {
+                if($imported['ZorgverzekeraarNaam'] !== $save_invoice['ZorgverzekeraarNaam']) {
+                    if($imported['DeclaratieDatum'] >= $save_invoice['DeclaratieDatum'])
+                    $save_invoice['ZorgverzekeraarNaam'] = $imported['ZorgverzekeraarNaam'];
+                }
+
+                $save_invoice['SubtrajectHoofdbehandelaar'] = $imported['SubtrajectHoofdbehandelaar'];
+
                 Invoices::update($imported['id'], $save_invoice, false);
             } else {
                 Invoices::insert($save_invoice, false);
@@ -401,10 +407,6 @@ class ImportInvoices extends Screen
             $invoice_dates []= strtotime($save_invoice['DeclaratieDatum']);
             $invoice_numbers []= (int) $save_invoice['DeclaratieNummer'];
         }
-
-        // Generate BulkInvoice from single Invoices
-        if($bulkInvoice['NumberInvoices'] > 0) BulkInvoice::insert($bulkInvoice);
-
 
         if ( $invoice_dates ) {
               
@@ -418,6 +420,13 @@ class ImportInvoices extends Screen
                 $invoice_numbers,
                 $this->appContext
             );
+        }
+
+        // Generate BulkInvoice from single Invoices
+        if($bulkInvoice['NumberInvoices'] > 0) {
+            
+            BulkInvoice::insert($bulkInvoice);
+
         }
 
         // remove codes found in policy errors table from unrecognized dbc codes

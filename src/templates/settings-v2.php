@@ -164,12 +164,19 @@
                 </div>
             </form>
         </div>
-
-
+        
         <div>
             <h2><?php _e('Transaction Auto Match Margin', 'zorgportal'); ?></h2>
 
-            <p><?php _e('Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.', 'zorgportal'); ?></p>
+            <p><?php _e('When patients pay you amounts, they can make small mistakes (cents). This setting allows you to define what amount falls in the margin you accept as Paid.'); ?></p>
+            <div style="display:flex; justify-content:space-between">
+                <p>
+                  <?php _e('Value', 'zorgportal'); ?>
+                </p>
+                <div style="display:flex; align-items:center">
+                    <input type="text" spellcheck="false" name="margin_cent" value="<?php echo esc_attr($_POST['margin_cent'] ?? ''); ?>"  class="widefat" />
+                </div>
+            </div>
         </div>
     </div>
     
