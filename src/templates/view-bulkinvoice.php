@@ -42,13 +42,13 @@
             <tr>
                 <td><strong><?php _e('ActualPaid', 'zorgportal'); ?></strong></td>
                 <td>
-                    <?php echo '€ ', esc_attr(number_format($invoice['actual'], 2)) ?: 'N/A'; ?>
+                    <?php echo $invoice['actual'] > 0 ? '€' . esc_attr(number_format($invoice['actual'], 2)) : 'N/A';?>                    
                     <?php echo esc_attr($invoice['tranId']); ?>
                 </td>
             </tr>
             <tr>
                 <td><strong><?php _e('Status', 'zorgportal'); ?></strong></td>
-                <td><?php \Zorgportal\Invoices::printStatus($invoice); ?></td>
+                <td><?php \Zorgportal\BulkInvoice::bulkStatus($invoice); ?></td>
             </tr>     
         </tbody>
     </table>

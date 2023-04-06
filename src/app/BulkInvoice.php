@@ -22,18 +22,14 @@ class BulkInvoice
         'SingleInvoices' => null    
     ];
 
-    const IMPORTED = 0;
-    const PAID = 0;
-    const DUE = 1;
-    const CREDITED = 0;
-    const COLLECTION = 0;
+    const PAYMENT_STATUS_PAID = 1;
+    const PAYMENT_STATUS_DUE = 2;
+    const PAYMENT_STATUS_OVERDUE = 3;
 
     const PAYMENT_STATUSES = [
-        self::IMPORTED,
-        self::PAID,
-        self::DUE,
-        self::CREDITED,
-        self::COLLECTION,
+        self::PAYMENT_STATUS_PAID,
+        self::PAYMENT_STATUS_DUE,
+        self::PAYMENT_STATUS_OVERDUE,
     ];
 
     const INVOICE = 1;
@@ -77,6 +73,7 @@ class BulkInvoice
         global $wpdb;
         $table = $wpdb->prefix . App::BULKINVOICE_TABLE;
         $invoicetable = $wpdb->prefix . App::INVOICES_TABLE;
+        $tranTbl = $wpdb->prefix . App::TRANSACTIONS_TABLE;
 
         $sql = "SELECT  {$table}.id AS parent_id,{$invoicetable}.id AS child_id, {$table}.*, {$invoicetable}.* FROM {$table} LEFT JOIN {$invoicetable} ON {$table}.id = {$invoicetable}.BulkInvoiceNumber WHERE 1=1 ";
 
@@ -87,7 +84,7 @@ class BulkInvoice
         $sql .= in_array(strtolower($args['order'] ?? ''), ['asc', 'desc']) ? strtolower($args['order'] ?? '') : 'asc';
      
         $list = (array) $wpdb->get_results($sql, ARRAY_A);
-
+        
         $newList = array(); $temp = 0; $i = 0;
 
         if(!empty($list)) {
@@ -96,13 +93,16 @@ class BulkInvoice
                     $i++; $j=0;
                     $newList[$i] = $value;
                     $newList[$i]['child'][$j] = $value;
+                    $trQuery = "SELECT SUM(AmountFC)as actual, id as tranId FROM {$tranTbl} WHERE YourRef = ". $value['parent_id']." ";
+                    $trx = (array) $wpdb->get_results($trQuery, ARRAY_A);
+                    $newList[$i]['actual'] = $trx[0]['actual'];
+                    $newList[$i]['tranId'] = $trx[0]['tranId'];
                 } else {
                     $j++; $newList[$i]['child'][$j] = $value;
                 }
                 $temp = $value['parent_id'];
             }
         }
-    
         return compact("newList");
     }
 
@@ -193,7 +193,7 @@ class BulkInvoice
         return $data;
     }
 
-    public static function queryBulk(array $args=[]) : array
+    public static function queryBulk(array $args=[], App $appContext) : array
     {
         global $wpdb;
         $table = $wpdb->prefix . App::BULKINVOICE_TABLE;
@@ -222,6 +222,23 @@ class BulkInvoice
     public static function printStatus( array $invoice )
     {
         switch ( $invoice['EoStatus'] ?? null ) {
+            case self::PAYMENT_STATUS_PAID:
+                echo __('Paid', 'zorgportal'); break;
+
+            case self::PAYMENT_STATUS_DUE:
+                echo __('Open', 'zorgportal'); break;
+
+            case self::PAYMENT_STATUS_OVERDUE:
+                echo __('Over-due', 'zorgportal'); break;
+
+            default:
+                echo __('Open', 'zorgportal'); break;
+        }
+    }
+
+    public static function bulkStatus( array $invoice )
+    {
+        switch ( $invoice['Status'] ?? null ) {
             case self::PAYMENT_STATUS_PAID:
                 echo __('Paid', 'zorgportal'); break;
 
@@ -322,8 +339,10 @@ class BulkInvoice
 
         $results = [];
        
-        set_time_limit(0);
+        $currentDate = date('Y-m-d');
 
+        set_time_limit(0);
+       
         self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/financialtransaction/TransactionLines/?$filter=(Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $from, $to), $appContext);
 
         $search = join(' ', array_map(function($payment)
@@ -367,13 +386,67 @@ class BulkInvoice
         Transactions::deleteOrphaned();
     }
 
-    public static function eoBulkRetrieveReceivables( string $from, string $to, array $invoice_numbers, App $appContext )
+    public static function eoSyncRetrieveInvoices( string $from, string $to, App $appContext )
     {
         if ( ! $division_code = $appContext->getCurrentDivisionCode() )
             return;
 
         $results = [];
-       
+        set_time_limit(0);
+
+        // Sync call
+        self::_eoSyncRetrieveInvoices($results, sprintf("https://start.exactonline.nl/api/v1/%s/read/sync/Sync/SyncTimestamp?modified=datetime'%s'&endPoint='TransactionLines'", $division_code, $from), $appContext);
+
+        self::_eoSyncRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/sync/Financial/TransactionLines?$filter=Timestamp gt %s&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $results['TimeStampAsBigInt']), $appContext);
+
+        $search = join(' ', array_map(function($payment)
+        {
+            return join(' ', [$payment['Notes'] ?? '', $payment['YourRef'] ?? '', $payment['Description'] ?? '']);
+        }, $results));
+
+        $ids = array_filter(self::extractPossibleInvoiceNumbers($search), function($num)
+        {
+            return 8 == strlen((string) $num);
+        });
+
+
+        global $wpdb;
+        $table = $wpdb->prefix . App::INVOICES_TABLE;
+
+        // save transaction
+        $txns = array_values(array_filter(array_map(function($id) use ($results)
+        {
+            foreach ( $results as $payment ) {
+                if ( ($payment['YourRef'] ?? '') == $id )
+                    return Transactions::parseApiItem($payment);
+            }
+
+            foreach ( $results as $payment ) {
+                $search = join(' ', [$payment['Notes'] ?? '', $payment['YourRef'] ?? '', $payment['Description'] ?? '']);
+
+                if ( in_array($id, self::extractPossibleInvoiceNumbers($search)) ) {
+                    $payment['YourRef'] = $id; // not filled by employee, found in notes
+                    return Transactions::parseApiItem($payment);
+                }
+            }
+        }, $ids)));
+
+
+        foreach ( array_chunk($txns, 100) as $bulk ) {
+            Transactions::insertBulk( $bulk );
+        }
+
+        // delete orphaned transactions
+        Transactions::deleteOrphaned();
+    }
+
+    public static function eoBulkRetrieveReceivables( string $from, string $to, array $invoice_numbers, App $appContext )
+    { 
+        if ( ! $division_code = $appContext->getCurrentDivisionCode() )
+            return;
+
+        $results = [];
+
         set_time_limit(0);
         self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/read/financial/ReceivablesList/?$filter=InvoiceDate gt datetime\'%s\' and InvoiceDate le datetime\'%s\'&$select=*', $division_code, $from, $to), $appContext);
 
@@ -418,6 +491,7 @@ class BulkInvoice
             ));
         }
     }
+
 
     public static function eoBulkCheckUnpaidInvoices( string $from, string $to, App $appContext )
     {
@@ -485,6 +559,39 @@ class BulkInvoice
 
         if ( $data['d']['__next'] ?? null )
             return self::_eoBulkRetrieveInvoices( $ref, $data['d']['__next'], $appContext );
+    }
+
+    private static function _eoSyncRetrieveInvoices( array &$ref, string $apiUrl, App $appContext )
+    {
+        if ( ! $tokens = get_option('zp_exactonline_auth_tokens') )
+            return;
+
+        if ( ! ( $tokens['access_token'] ?? null ) )
+            return;
+        
+        list( $res, $error, $res_obj ) = App::callEoApi($apiUrl, [
+            'method' => 'GET',
+            'headers' => [
+                'Authorization' => "bearer {$tokens['access_token']}",
+                'Accept' => 'application/json',
+            ],
+            'timeout' => 20,
+        ]);
+
+        if ( $error ) {
+            error_log('Invoices cron update api error: ' . $error . PHP_EOL);
+            return;
+        }
+
+        if ( ! $res )
+            return;
+
+        $data = json_decode($res, true);
+
+        $ref = array_merge($ref, $data['d']['results'] ?? []);
+
+        if ( $data['d']['__next'] ?? null )
+            return self::_eoSyncRetrieveInvoices( $ref, $data['d']['__next'], $appContext );
     }
 
     public static function sendFirstReminder( array $vars, App $appContext, bool $get_email_contents=false )

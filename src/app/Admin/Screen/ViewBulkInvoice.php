@@ -4,6 +4,7 @@ namespace Zorgportal\Admin\Screen;
 
 use Zorgportal\BulkInvoice;
 use Zorgportal\Transactions;
+use Zorgportal\App;
 
 class ViewBulkInvoice extends Screen
 {
@@ -15,7 +16,7 @@ class ViewBulkInvoice extends Screen
         if ( $id <= 0 )
             exit( wp_safe_redirect('admin.php?page=zorgportal-bulkinvoice') );
 
-        if ( ! $this->bulkinvoice = BulkInvoice::queryBulk(['id' => $id]) )
+        if ( ! $this->bulkinvoice = BulkInvoice::queryBulk(['id' => $id], $this->appContext) )
             exit( wp_safe_redirect('admin.php?page=zorgportal-bulkinvoice') );
 
         // refresh status

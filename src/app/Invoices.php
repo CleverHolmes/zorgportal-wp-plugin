@@ -507,6 +507,9 @@ class Invoices
         $results = [];
        
         set_time_limit(0);
+
+        // Implement Sync Calls
+
         self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/financialtransaction/TransactionLines/?$filter=Type eq 40 and GLAccountCode eq \'1100\' and (Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $from, $to), $appContext);
 
         $search = join(' ', array_map(function($payment)
@@ -549,6 +552,61 @@ class Invoices
                 }
             }
         }, $ids)));
+
+        foreach ( array_chunk($txns, 100) as $bulk ) {
+            Transactions::insertBulk( $bulk );
+        }
+
+        // delete orphaned transactions
+        Transactions::deleteOrphaned();
+    }
+
+    public static function eoSyncRetrieveInvoices( string $from, string $to, App $appContext )
+    {
+        if ( ! $division_code = $appContext->getCurrentDivisionCode() )
+            return;
+
+        $results = [];
+       
+        set_time_limit(0);
+
+        // Sync call
+        self::_eoBulkRetrieveInvoices($results, sprintf("https://start.exactonline.nl/api/v1/%s/read/sync/Sync/SyncTimestamp?modified=datetime'%s'&endPoint='TransactionLines'", $division_code, date('Y-m-d')), $appContext);
+
+        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/sync/Financial/TransactionLines?$filter=Timestamp gt \'%s\' and Type eq 40 and GLAccountCode eq \'1100\' and (Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $results['TimeStampAsBigInt'], $from, $to), $appContext);
+
+        $search = join(' ', array_map(function($payment)
+        {
+            return join(' ', [$payment['Notes'] ?? '', $payment['YourRef'] ?? '', $payment['Description'] ?? '']);
+        }, $results));
+
+        $ids = array_filter(self::extractPossibleInvoiceNumbers($search), function($num)
+        {
+            return 8 == strlen((string) $num);
+        });
+
+
+        global $wpdb;
+        $table = $wpdb->prefix . App::INVOICES_TABLE;
+
+        // save transaction
+        $txns = array_values(array_filter(array_map(function($id) use ($results)
+        {
+            foreach ( $results as $payment ) {
+                if ( ($payment['YourRef'] ?? '') == $id )
+                    return Transactions::parseApiItem($payment);
+            }
+
+            foreach ( $results as $payment ) {
+                $search = join(' ', [$payment['Notes'] ?? '', $payment['YourRef'] ?? '', $payment['Description'] ?? '']);
+
+                if ( in_array($id, self::extractPossibleInvoiceNumbers($search)) ) {
+                    $payment['YourRef'] = $id; // not filled by employee, found in notes
+                    return Transactions::parseApiItem($payment);
+                }
+            }
+        }, $ids)));
+
 
         foreach ( array_chunk($txns, 100) as $bulk ) {
             Transactions::insertBulk( $bulk );
@@ -675,6 +733,41 @@ class Invoices
 
         if ( $data['d']['__next'] ?? null )
             return self::_eoBulkRetrieveInvoices( $ref, $data['d']['__next'], $appContext );
+    }
+
+    private static function _eoSyncRetrieveInvoices( array &$ref, string $apiUrl, App $appContext )
+    {
+        if ( ! $tokens = get_option('zp_exactonline_auth_tokens') )
+            return;
+
+        if ( ! ( $tokens['access_token'] ?? null ) )
+            return;
+        
+        print_r($apiUrl);die;
+
+        list( $res, $error, $res_obj ) = App::callEoApi($apiUrl, [
+            'method' => 'GET',
+            'headers' => [
+                'Authorization' => "bearer {$tokens['access_token']}",
+                'Accept' => 'application/json',
+            ],
+            'timeout' => 20,
+        ]);
+
+        if ( $error ) {
+            error_log('Invoices cron update api error: ' . $error . PHP_EOL);
+            return;
+        }
+
+        if ( ! $res )
+            return;
+
+        $data = json_decode($res, true);
+
+        $ref = array_merge($ref, $data['d']['results'] ?? []);
+
+        if ( $data['d']['__next'] ?? null )
+            return self::_eoSyncRetrieveInvoices( $ref, $data['d']['__next'], $appContext );
     }
 
     public static function sendFirstReminder( array $vars, App $appContext, bool $get_email_contents=false )
@@ -864,17 +957,18 @@ class Invoices
         $maxBulk = (array) $wpdb->get_results("select max(id)as maxId from {$BulkTbl} where 1=1");
         $max = $maxBulk[0]->maxId == 0 ? "43000000" : $maxBulk[0]->maxId + 1; 
 
-            $sQuery = "select sum(SubtrajectDeclaratiebedrag)as Atotal, sum(ReimburseAmount)as Rtotal, max(DeclaratieDatum)as BillDate,count(id)as idCnt from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber IS NULL OR 0";
+            $sQuery = "select sum(SubtrajectDeclaratiebedrag)as Atotal, sum(ReimburseAmount)as Rtotal, max(DeclaratieDatum)as BillDate,count(id)as idCnt from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and (BulkInvoiceNumber IS NULL OR BulkInvoiceNumber = 0)";
 
-            $uQuery = "update {$table} set BulkInvoiceNumber = '".$max."' where `id` in (" . join(',', array_map('intval', $ids)) . ') and BulkInvoiceNumber IS Null OR 0';
+            $uQuery = "update {$table} set BulkInvoiceNumber = '".$max."' where `id` in (" . join(',', array_map('intval', $ids)) . ') and (BulkInvoiceNumber IS NULL OR BulkInvoiceNumber = 0)';
 
-            $idQuery = "select GROUP_CONCAT(DeclaratieNummer SEPARATOR ',')as idGroup, max(DeclaratieDatum)as endDate, min(DeclaratieDatum)as startDate from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and BulkInvoiceNumber IS NULL OR 0";
+            $idQuery = "select GROUP_CONCAT(DeclaratieNummer SEPARATOR ',')as idGroup, max(DeclaratieDatum)as endDate, min(DeclaratieDatum)as startDate from {$table} where `id` in (" . join(',', array_map('intval', $ids)) . ") and (BulkInvoiceNumber IS NULL OR BulkInvoiceNumber = 0)";
 
         $mount = (array) $wpdb->get_results($sQuery);
         $idGroup = (array) $wpdb->get_results($idQuery, ARRAY_A);
         $update = $wpdb->query($uQuery);
 
         if($mount[0]->idCnt > 0 ) {
+
             $now = new DateTime();
             $interval = new DateInterval('P28D'); // P28D means "28 Days Interval"
             $iData ['id'] = $max; 
@@ -895,7 +989,7 @@ class Invoices
             //Call BankTransaction API
             $startDate = new DateTime($idGroup[0]['startDate']);
 
-            BulkInvoice::eoBulkRetrieveInvoices(strval($startDate->format('Y-m-d')), strval(date('Y-m-d')), $appContext);
+            BulkInvoice::eoSyncRetrieveInvoices(strval($startDate->format('Y-m-d')), strval(date('Y-m-d')), $appContext);
 
             return $wpdb->insert_id;
         }

@@ -107,8 +107,11 @@
                             <td class="author column-author" style="vertical-align: middle;"><?php echo esc_attr($entry['NumberInvoices']) ?: '-'; ?></td>
                             <td class="author column-author" style="white-space:nowrap; vertical-align: middle;"><?php echo '€ ', esc_attr(number_format($entry['AmountTotal'], 2)) ?: '-'; ?></td>
                             <td class="author column-author" style="white-space:nowrap; vertical-align: middle;"><?php echo '€ ', esc_attr(number_format($entry['ReimburseTotal'], 2)) ?: '-'; ?></td>
-                            <td class="author column-author" style="white-space:nowrap; vertical-align: middle;"> N/A</td>
-                            <td style="vertical-align: middle;"><?php \Zorgportal\Invoices::printStatus($entry); ?></td>
+                            <td class="author column-author" style="white-space:nowrap; vertical-align: middle;">    
+                                <?php echo $entry['actual'] > 0 ? '€' . esc_attr(number_format($entry['actual'], 2)) : 'N/A';?>                    
+                                <?php echo esc_attr($entry['tranId']); ?>
+                            </td>
+                            <td style="vertical-align: middle;"><?php \Zorgportal\BulkInvoice::bulkStatus($entry); ?></td>
 
                             <td class="author column-author" style="vertical-align: middle;">
                                 <a href="admin.php?page=zorgportal-view-bulkinvoice&id=<?php echo $entry['parent_id']; ?>"><?php _e('View', 'zorgportal'); ?></a>

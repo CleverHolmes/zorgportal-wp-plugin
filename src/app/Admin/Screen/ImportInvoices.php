@@ -385,8 +385,8 @@ class ImportInvoices extends Screen
             ];
 
             if($bulkId !== null) {
-                $bulkInvoice['AmountTotal'] += $save_invoice['ReimburseAmount'];
-                $bulkInvoice['ReimburseTotal'] += $save_invoice['SubtrajectDeclaratiebedrag'];
+                $bulkInvoice['AmountTotal'] += $save_invoice['SubtrajectDeclaratiebedrag'];
+                $bulkInvoice['ReimburseTotal'] += $save_invoice['ReimburseAmount'];
                 $bulkInvoice['NumberInvoices'] ++;
                 array_push($bulkInvoice['invoiceList'], $save_invoice['DeclaratieNummer'] );
             }

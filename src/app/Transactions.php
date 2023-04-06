@@ -295,7 +295,6 @@ class Transactions
         return $ref;
     }
 
-
     public function getBulkTransaction( string $id ) {
 
         global $wpdb;
