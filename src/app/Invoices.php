@@ -743,8 +743,6 @@ class Invoices
         if ( ! ( $tokens['access_token'] ?? null ) )
             return;
         
-        print_r($apiUrl);die;
-
         list( $res, $error, $res_obj ) = App::callEoApi($apiUrl, [
             'method' => 'GET',
             'headers' => [

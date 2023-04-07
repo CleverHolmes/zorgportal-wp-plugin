@@ -355,7 +355,6 @@ class BulkInvoice
             return 8 == strlen((string) $num);
         });
 
-
         global $wpdb;
         $table = $wpdb->prefix . App::INVOICES_TABLE;
 
