@@ -85,7 +85,7 @@ class Client
         $connection = new Connection();
         $connection->setRedirectUrl(admin_url('admin.php?page=zorgportal-settings'));
         $connection->setExactClientId(get_option('zorgportal_exact_client_id'));
-        $connection->setExactClientSecret(get_option('zorgportal_exact_client_secret'));
+        $connection->setExactClientSecret(get_option('zorgportal_exact_client_secret')); 
         $connection->redirectForAuthorization();
     }
 

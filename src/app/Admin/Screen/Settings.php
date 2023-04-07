@@ -44,8 +44,9 @@ class Settings extends Screen
     }
 
     public static function auth()
-    {
+    {      
         $tokens = get_option('zp_exactonline_auth_tokens') ?: [];
+        
 
         // If authorization code is returned from Exact, save this to use for token request
         if (isset($_GET['code']) && is_null($tokens['authorizationcode'] ?? null)) {
@@ -123,22 +124,22 @@ class Settings extends Screen
 
     private function oauthRedirect()
     {
-        if ( ! $client_id = sanitize_text_field($_POST['client_id'] ?? '') )
-            return $this->error( __('Please enter a client id.', 'zorgportal') );
+        // if ( ! $client_id = sanitize_text_field($_POST['client_id'] ?? '') )
+        //     return $this->error( __('Please enter a client id.', 'zorgportal') );
 
-        if ( ! $client_secret = sanitize_text_field($_POST['client_secret'] ?? '') )
-            return $this->error( __('Please enter a client secret.', 'zorgportal') );
+        // if ( ! $client_secret = sanitize_text_field($_POST['client_secret'] ?? '') )
+        //     return $this->error( __('Please enter a client secret.', 'zorgportal') );
 
-        $webhook_secret = sanitize_text_field($_POST['webhook_secret'] ?? '');
+        // $webhook_secret = sanitize_text_field($_POST['webhook_secret'] ?? '');
 
-        if ( $client_id != get_option('zorgportal_exact_client_id')
-            || $client_secret != get_option('zorgportal_exact_client_secret') ) {
-            $this->oauthDisconnect();
-        }
+        // if ( $client_id != get_option('zorgportal_exact_client_id')
+        //     || $client_secret != get_option('zorgportal_exact_client_secret') ) {
+        //     $this->oauthDisconnect();
+        // }
 
-        update_option('zorgportal_exact_client_id', $client_id);
-        update_option('zorgportal_exact_client_secret', $client_secret);
-        update_option('zorgportal_exact_webhook_secret', $webhook_secret);
+        // update_option('zorgportal_exact_client_id', $client_id);
+        // update_option('zorgportal_exact_client_secret', $client_secret);
+        // update_option('zorgportal_exact_webhook_secret', $webhook_secret);
 
         try {
             self::auth();

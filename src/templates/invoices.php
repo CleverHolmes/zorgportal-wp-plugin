@@ -2,10 +2,10 @@
 
 <div class="wrap">
     <h2 style="display:none"></h2>
-
+    
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;margin-bottom:.55rem">
 
-        <form method="post" action="admin.php?page=zorgportal-invoices" onsubmit="return confirm('<?php esc_attr_e('Are you sure?', 'zorgportal'); ?>')" style="margin-left:4px;position:absolute;margin-left: 294px;margin-top: -60px;">
+        <form method="post" action="admin.php?page=zorgportal-invoices" style="margin-left:4px;position:absolute;margin-left: 294px;margin-top: -60px;" onsubmit="return confirm('<?php esc_attr_e('Are you sure?', 'zorgportal'); ?>')">
             <?php if ( $list ) : ?>
                 <?php foreach ( $list as $entry ) : ?>
                 <input type="hidden" name="h_items[]" value="<?php echo $entry['id']; ?>" >
@@ -115,8 +115,7 @@
             <input class="button" type="submit" value="<?php esc_attr_e('Update All', 'zorgportal'); ?>" />
         </form>
     </div>
-
-    <form method="post" action="/" data-action="<?php echo remove_query_arg('bulk'); ?>" id="zportal-items" data-confirm="<?php esc_attr_e('Are you sure?', 'zorgportal'); ?>">
+    <form method="post" action="/" data-action="<?php echo remove_query_arg('bulk'); ?>" id="zportal-items" data-id="popmake-195" data-confirm="<?php esc_attr_e('Are you ffff?', 'zorgportal'); ?>">
         <table class="wp-list-table widefat striped posts xfixed">
             <thead>
                 <tr>

@@ -515,9 +515,9 @@ class App
             'request_url' => $url,
             'request_body' => ($params['body'] ?? null) ?: '',
             'request_headers' => self::getResponseHeadersStr( null, ($params['headers'] ?? null) ?: [] ),
-            'response' => $res->errors ? '' : $res['body'],
+            'response' => ($res['body'] ?? null) ?: '',
             'response_headers' => self::getResponseHeadersStr( $res ),
-            'http_status' => $res->errors ? '' : intval($res['response']['code']),
+            'http_status' => intval($res['response']['code'] ?? ''),
             'status' => $is_error_res ? EoLogs::STATUS_ERROR : EoLogs::STATUS_OK,
             'date' => time(),
         ]);

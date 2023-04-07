@@ -396,7 +396,7 @@ class BulkInvoice
         // Sync call
         self::_eoSyncRetrieveInvoices($results, sprintf("https://start.exactonline.nl/api/v1/%s/read/sync/Sync/SyncTimestamp?modified=datetime'%s'&endPoint='TransactionLines'", $division_code, $from), $appContext);
 
-        self::_eoSyncRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/sync/Financial/TransactionLines?$filter=Timestamp gt %s&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $results['TimeStampAsBigInt']), $appContext);
+        self::_eoSyncRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/sync/Financial/TransactionLines?$filter=Timestamp gt %s&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $results['TimeStampAsBigInt']."L"), $appContext);
 
         $search = join(' ', array_map(function($payment)
         {
@@ -567,7 +567,7 @@ class BulkInvoice
 
         if ( ! ( $tokens['access_token'] ?? null ) )
             return;
-        
+    
         list( $res, $error, $res_obj ) = App::callEoApi($apiUrl, [
             'method' => 'GET',
             'headers' => [
@@ -584,11 +584,11 @@ class BulkInvoice
 
         if ( ! $res )
             return;
-
+      
         $data = json_decode($res, true);
 
         $ref = array_merge($ref, $data['d']['results'] ?? []);
-
+        
         if ( $data['d']['__next'] ?? null )
             return self::_eoSyncRetrieveInvoices( $ref, $data['d']['__next'], $appContext );
     }

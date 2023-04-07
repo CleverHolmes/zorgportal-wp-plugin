@@ -91,7 +91,9 @@ class Invoices extends Screen
     {
         $base = trailingslashit(plugin_dir_url( $this->appContext->getPluginFile() ));
         wp_enqueue_style( 'zportal-codes', "{$base}src/assets/codes.css", [], $this->appContext::SCRIPTS_VERSION );
+        wp_enqueue_style( 'zportal-pum', "{$base}src/assets/css/pum-site-styles.css", [], $this->appContext::SCRIPTS_VERSION );
         wp_enqueue_script( 'zportal-codes', "{$base}src/assets/codes.js", ['jquery'], $this->appContext::SCRIPTS_VERSION, 1 );
+        wp_enqueue_script( 'zportal-pum', "{$base}src/assets/js/pum-site-scripts.js", ['jquery'], $this->appContext::SCRIPTS_VERSION, 1 );
     }
 
     public function update()

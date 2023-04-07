@@ -573,7 +573,7 @@ class Invoices
         // Sync call
         self::_eoBulkRetrieveInvoices($results, sprintf("https://start.exactonline.nl/api/v1/%s/read/sync/Sync/SyncTimestamp?modified=datetime'%s'&endPoint='TransactionLines'", $division_code, date('Y-m-d')), $appContext);
 
-        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/sync/Financial/TransactionLines?$filter=Timestamp gt \'%s\' and Type eq 40 and GLAccountCode eq \'1100\' and (Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $results['TimeStampAsBigInt'], $from, $to), $appContext);
+        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/sync/Financial/TransactionLines?$filter=Timestamp gt \'%s\' and Type eq 40 and GLAccountCode eq \'1100\' and (Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $results['TimeStampAsBigInt']."L", $from, $to), $appContext);
 
         $search = join(' ', array_map(function($payment)
         {

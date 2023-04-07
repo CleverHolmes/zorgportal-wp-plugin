@@ -76,7 +76,9 @@
           })
         } else {
           if(res.errors) {
-            alert(opt[res.errors]);
+            $('#zp-notices', form).html("");
+            $('#zp-notices', form).append(
+              $('<div class="notice is-dismissible error"><p>' + opt[res.errors] + '</p></div>'))
           } else if(res.non_exist) {
             alert(res.non_exist);
           } else alert(res.error || opt.error)

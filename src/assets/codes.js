@@ -22,6 +22,6 @@
       return e.preventDefault()
     }
 
-    inline_delete = false
+    // inline_delete = false
   })
 })( window.jQuery )
