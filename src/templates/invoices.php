@@ -115,7 +115,7 @@
             <input class="button" type="submit" value="<?php esc_attr_e('Update All', 'zorgportal'); ?>" />
         </form>
     </div>
-    <form method="post" action="/" data-action="<?php echo remove_query_arg('bulk'); ?>" id="zportal-items" data-id="popmake-195" data-confirm="<?php esc_attr_e('Are you ffff?', 'zorgportal'); ?>">
+    <form method="post" action="/" data-action="<?php echo remove_query_arg('bulk'); ?>" id="zportal-items" data-confirm="<?php esc_attr_e('Are you sure?', 'zorgportal'); ?>">
         <table class="wp-list-table widefat striped posts xfixed">
             <thead>
                 <tr>
