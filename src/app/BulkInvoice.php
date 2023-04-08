@@ -343,7 +343,7 @@ class BulkInvoice
 
         set_time_limit(0);
        
-        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/financialtransaction/TransactionLines/?$filter=(Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $from, $to), $appContext);
+        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/financialtransaction/TransactionLines/?$filter=(Date gt datetime\'%s\' and Date le datetime\'%s\')&$select=*', $division_code, $from, $to), $appContext);
 
         $search = join(' ', array_map(function($payment)
         {
@@ -396,7 +396,7 @@ class BulkInvoice
         // Sync call
         self::_eoSyncRetrieveInvoices($results, sprintf("https://start.exactonline.nl/api/v1/%s/read/sync/Sync/SyncTimestamp?modified=datetime'%s'&endPoint='TransactionLines'", $division_code, $from), $appContext);
 
-        self::_eoSyncRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/sync/Financial/TransactionLines?$filter=Timestamp gt %s&$select=ID,AccountName,AmountDC,AmountFC,Created,Date,Modified,Description,DocumentSubject,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceNumber,JournalCode,JournalDescription,Notes,FinancialPeriod,FinancialYear,PaymentReference,Status,Type,YourRef', $division_code, $results['TimeStampAsBigInt']."L"), $appContext);
+        self::_eoSyncRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/sync/Financial/TransactionLines?$filter=Timestamp gt %s&$select=*', $division_code, $results['TimeStampAsBigInt']."L"), $appContext);
 
         $search = join(' ', array_map(function($payment)
         {
@@ -491,7 +491,6 @@ class BulkInvoice
         }
     }
 
-
     public static function eoBulkCheckUnpaidInvoices( string $from, string $to, App $appContext )
     {
         if ( ! $division_code = $appContext->getCurrentDivisionCode() )
@@ -500,7 +499,7 @@ class BulkInvoice
         $results = [];
 
         set_time_limit(0);
-        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/bulk/Cashflow/Receivables/?$filter=InvoiceDate gt datetime\'%s\' and InvoiceDate le datetime\'%s\'&$select=AccountCode,AccountName,AmountDC,BankAccountNumber,Created,CreatorFullName,Description,Division,DueDate,EndDate,EndYear,EndPeriod,EntryDate,EntryNumber,GLAccountCode,GLAccountDescription,InvoiceDate,InvoiceNumber,IsFullyPaid,Journal,JournalDescription,LastPaymentDate,Modified,ModifierFullName,Source,Status,TransactionAmountDC,TransactionReportingPeriod,PaymentCondition,PaymentConditionDescription,PaymentDays,PaymentMethod,PaymentReference,YourRef', $division_code, $from, $to), $appContext);
+        self::_eoBulkRetrieveInvoices($results, sprintf('https://start.exactonline.nl/api/v1/%s/bulk/Cashflow/Receivables/?$filter=InvoiceDate gt datetime\'%s\' and InvoiceDate le datetime\'%s\'&$select=*', $division_code, $from, $to), $appContext);
 
         $ids = array_filter(array_unique(array_map(function($payment)
         {
