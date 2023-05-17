@@ -138,7 +138,6 @@ class Invoices extends Screen
             if($bulk == 0) return $this->error('Invoice was bulked already.', ' bulk_error.', $bulk, 'zorgportal' );
             else exit( wp_safe_redirect('admin.php?page=zorgportal-bulkinvoice') );
         }
-
         
     }
 

@@ -162,8 +162,8 @@ class App
 
         // subscribe to exact webhook events
         if ( ! wp_next_scheduled( 'zorgportal_exact_webhook_subscription_defer' ) ) {
-            wp_schedule_event( time() + 20, '1min', 'zorgportal_exact_webhook_subscription_defer' );
-        }
+            wp_schedule_event( time(), 'daily', 'zorgportal_exact_webhook_subscription_defer' );
+        }    
 
         // default options
         add_option('zorgportal:activation_key', '');
@@ -209,16 +209,8 @@ class App
         {
             $client = \Zorgportal\Util\Exact\Client::connect();
 
-            var_dump( \Zorgportal\Util\Exact\Webhooks::receiveDebug() );exit;
-
-
-            // var_dump( \Zorgportal\Util\Exact\Webhooks::getList($client) );
-            exit;
-
-            // \Zorgportal\Util\Exact\Webhooks::unsubscribeEvents($client);
-            // \Zorgportal\Util\Exact\Webhooks::subscribeToEvents($client);
+            var_dump( \Zorgportal\Util\Exact\Webhooks::receiveDebug() ); exit;
         });
-
 
         // i18n
         load_plugin_textdomain(
@@ -332,6 +324,7 @@ class App
             delete_transient($transient_id);
         });
 
+        
         $this->updateInvoicesEoStatus(function()
         {
             return Invoices::query([
@@ -554,5 +547,11 @@ class App
 
         // clear all events for this cron so it runs once
         wp_clear_scheduled_hook('zorgportal_exact_webhook_subscription_defer');
+    }
+
+    public function forTest($str) {
+        $file = fopen("F:\qq.txt", "w"); //opens the file in write mode or shows an error message if unable to open
+        fwrite($file, $str); //writes the $txt content into the opened file
+        fclose($file); //closes the file 
     }
 }

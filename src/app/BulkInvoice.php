@@ -63,8 +63,7 @@ class BulkInvoice
           `Policy ` text,
           `Status` int unsigned,
           `SingleInvoices` text,
-          primary key(`id`),
-          FOREIGN KEY (id) REFERENCES ".$invoiceTable."(BulkInvoiceNumber)
+          primary key(`id`)
         ) {$wpdb->get_charset_collate()};");
     }
 
@@ -408,7 +407,6 @@ class BulkInvoice
             return 8 == strlen((string) $num);
         });
 
-
         global $wpdb;
         $table = $wpdb->prefix . App::INVOICES_TABLE;
 
@@ -510,8 +508,6 @@ class BulkInvoice
         {
             return 8 == strlen((string) $num);
         });
-
-
 
         global $wpdb;
         $table = $wpdb->prefix . App::INVOICES_TABLE;
